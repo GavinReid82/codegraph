@@ -75,6 +75,8 @@ export type Language =
   | 'svelte'
   | 'liquid'
   | 'pascal'
+  | 'sql'
+  | 'yaml'
   | 'unknown';
 
 // =============================================================================

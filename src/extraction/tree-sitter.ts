@@ -22,6 +22,8 @@ import { EXTRACTORS } from './languages';
 import { LiquidExtractor } from './liquid-extractor';
 import { SvelteExtractor } from './svelte-extractor';
 import { DfmExtractor } from './dfm-extractor';
+import { SqlExtractor } from './sql-extractor';
+import { YamlExtractor } from './yaml-extractor';
 
 // Re-export for backward compatibility
 export { generateNodeId } from './tree-sitter-helpers';
@@ -2329,6 +2331,18 @@ export function extractFromSource(
   // Use custom extractor for Liquid
   if (detectedLanguage === 'liquid') {
     const extractor = new LiquidExtractor(filePath, source);
+    return extractor.extract();
+  }
+
+  // Use custom extractor for SQL
+  if (detectedLanguage === 'sql') {
+    const extractor = new SqlExtractor(filePath, source);
+    return extractor.extract();
+  }
+
+  // Use custom extractor for YAML
+  if (detectedLanguage === 'yaml') {
+    const extractor = new YamlExtractor(filePath, source);
     return extractor.extract();
   }
 

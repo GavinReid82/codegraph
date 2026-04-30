@@ -10,7 +10,7 @@ import * as path from 'path';
 import { Parser, Language as WasmLanguage } from 'web-tree-sitter';
 import { Language } from '../types';
 
-export type GrammarLanguage = Exclude<Language, 'svelte' | 'liquid' | 'unknown'>;
+export type GrammarLanguage = Exclude<Language, 'svelte' | 'liquid' | 'sql' | 'yaml' | 'unknown'>;
 
 /**
  * WASM filename map — maps each language to its .wasm grammar file
@@ -68,6 +68,9 @@ export const EXTENSION_MAP: Record<string, Language> = {
   '.dart': 'dart',
   '.liquid': 'liquid',
   '.svelte': 'svelte',
+  '.sql': 'sql',
+  '.yml': 'yaml',
+  '.yaml': 'yaml',
   '.pas': 'pascal',
   '.dpr': 'pascal',
   '.dpk': 'pascal',
@@ -202,6 +205,8 @@ function looksLikeCpp(source: string): boolean {
 export function isLanguageSupported(language: Language): boolean {
   if (language === 'svelte') return true; // custom extractor (script block delegation)
   if (language === 'liquid') return true; // custom regex extractor
+  if (language === 'sql') return true;    // custom regex extractor
+  if (language === 'yaml') return true;   // custom regex extractor
   if (language === 'unknown') return false;
   return language in WASM_GRAMMAR_FILES;
 }
@@ -210,7 +215,7 @@ export function isLanguageSupported(language: Language): boolean {
  * Check if a grammar has been loaded and is ready for parsing.
  */
 export function isGrammarLoaded(language: Language): boolean {
-  if (language === 'svelte' || language === 'liquid') return true;
+  if (language === 'svelte' || language === 'liquid' || language === 'sql' || language === 'yaml') return true;
   return languageCache.has(language);
 }
 
@@ -218,7 +223,7 @@ export function isGrammarLoaded(language: Language): boolean {
  * Get all supported languages (those with grammar definitions).
  */
 export function getSupportedLanguages(): Language[] {
-  return [...(Object.keys(WASM_GRAMMAR_FILES) as GrammarLanguage[]), 'svelte', 'liquid'];
+  return [...(Object.keys(WASM_GRAMMAR_FILES) as GrammarLanguage[]), 'svelte', 'liquid', 'sql', 'yaml'];
 }
 
 /**
@@ -284,6 +289,8 @@ export function getLanguageDisplayName(language: Language): string {
     svelte: 'Svelte',
     liquid: 'Liquid',
     pascal: 'Pascal / Delphi',
+    sql: 'SQL',
+    yaml: 'YAML',
     unknown: 'Unknown',
   };
   return names[language] || language;
